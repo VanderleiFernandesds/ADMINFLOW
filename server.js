@@ -4,11 +4,18 @@ import dotenv from 'dotenv';
 
 import db from './db.js';
 
+import userRoutes from './routes/userRoutes.js';
 dotenv.config();
 
 const app = express();
 
 app.use(express.json());
+
+app.use(
+  '/users',
+
+  userRoutes
+);
 
 app.get('/', (req, res) => {
   res.json({
