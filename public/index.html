@@ -9,57 +9,92 @@
 
     <link rel="stylesheet" href="./css/style.css" />
   </head>
-
   <body>
     <div class="dashboard">
       <aside class="sidebar">
         <h2>AdminFlow</h2>
 
         <nav>
-          <a href="#"> Dashboard </a>
-
-          <a href="#"> Usuários </a>
-
-          <a href="#"> Configurações </a>
-
-          <a href="#"> Logout </a>
+          <a href="#">Dashboard</a>
+          <a href="#">Usuários</a>
+          <a href="#">Configurações</a>
+          <a href="#">Logout</a>
         </nav>
       </aside>
 
       <main class="content">
         <header class="header">
-          <h1>Gestão de Usuários</h1>
+          <div>
+            <span class="subtitle">PAINEL ADMINISTRATIVO</span>
+            <h1>Gestão de Usuários</h1>
+          </div>
+
+          <button id="openModalBtn">Novo Usuário</button>
         </header>
+        <div id="loading" class="loading">Carregando usuários...</div>
         <section class="table-container">
           <table>
             <thead>
               <tr>
                 <th>ID</th>
-
                 <th>Nome</th>
-
                 <th>Email</th>
-
                 <th>Status</th>
+                <th>Ações</th>
               </tr>
             </thead>
 
-            <tbody>
-              <tr>
-                <td>1</td>
-
-                <td>João Silva</td>
-
-                <td>joao@email.com</td>
-
-                <td>Ativo</td>
-              </tr>
-            </tbody>
+            <tbody id="userTableBody"></tbody>
           </table>
         </section>
       </main>
     </div>
 
+    <div id="userModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalTitle">Novo Usuário</h2>
+          <button type="button" class="close-btn" id="closeModalBtn">×</button>
+        </div>
+
+        <form id="userForm">
+          <div class="form-group">
+            <label for="name">Nome</label>
+            <input type="text" id="name" placeholder="Digite o nome" required />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Digite o email" required />
+          </div>
+
+          <div class="form-group">
+            <label for="roleId">Role ID</label>
+            <input type="number" id="roleId" placeholder="Role ID (opcional)" />
+          </div>
+
+          <button type="submit" id="saveUserBtn">Salvar</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="deleteModal" class="modal">
+      <div class="modal-content delete-modal">
+        <div class="delete-icon">⚠️</div>
+
+        <h2>Confirmar Exclusão</h2>
+
+        <p id="deleteMessage">Deseja realmente excluir?</p>
+
+        <div class="modal-actions">
+          <button id="cancelDeleteBtn" class="secondary-btn">Cancelar</button>
+
+          <button id="confirmDeleteBtn" class="danger-btn">Excluir</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
     <script src="./js/main.js"></script>
   </body>
 </html>
