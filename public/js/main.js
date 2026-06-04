@@ -2,7 +2,9 @@ const API_URL = 'http://localhost:3000/users';
 
 let editingUserId = null;
 let userToDelete = null;
+let usersData = [];
 
+const searchInput = document.getElementById('searchInput');
 const userTableBody = document.getElementById('userTableBody');
 const userModal = document.getElementById('userModal');
 const deleteModal = document.getElementById('deleteModal');
@@ -23,6 +25,7 @@ const toast = document.getElementById('toast');
 const loading = document.getElementById('loading');
 
 async function loadUsers() {
+
   try {
     loading.style.display = 'block';
 
@@ -32,7 +35,11 @@ async function loadUsers() {
       throw new Error('Erro ao carregar usuários');
     }
 
-    const users = await response.json();
+     const users = await response.json();
+
+     usersData = users;
+
+     renderUsers(usersData);
 
     renderUsers(users);
   } catch (error) {
@@ -255,4 +262,18 @@ const closeModalBtn = document.getElementById('closeModalBtn');
 
 closeModalBtn.addEventListener('click', () => {
   closeUserModal();
+});
+
+
+searchInput.addEventListener('input', () => {
+  const searchValue = searchInput.value.toLowerCase();
+
+  const filteredUsers = usersData.filter((user) => {
+    return (
+      user.name.toLowerCase().includes(searchValue) ||
+      user.email.toLowerCase().includes(searchValue)
+    );
+  });
+
+  renderUsers(filteredUsers);
 });

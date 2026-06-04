@@ -290,3 +290,17 @@ button {
   color: #64748b;
   font-weight: 700;
 }
+
+
+.table-actions {
+  margin-bottom: 20px;
+}
+
+#searchInput {
+  width: 100%;
+  max-width: 360px;
+  padding: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 15px;
+}
