@@ -7,24 +7,33 @@ import db from '../db.js';
  */
 export async function getUsers(req, res) {
   try {
-    // Executar query para buscar todos os usuários
-    const [users] = await db.query(`SELECT
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = 10;
+    const offset = (page - 1) * limit;
 
-        id,
-        name,
-        email,
-        status,
-        created_at
+    const [[countResult]] = await db.query('SELECT COUNT(*) AS total FROM users');
+    const totalPages = Math.max(Math.ceil(countResult.total / limit), 1);
 
-      FROM users`);
+    const [users] = await db.query(
+      `SELECT
+          id,
+          name,
+          email,
+          status,
+          role,
+          created_at
+        FROM users
+        LIMIT ? OFFSET ?`,
+      [limit, offset]
+    );
 
-    // Retornar usuários com status 200 (OK)
-    res.status(200).json(users);
+    res.status(200).json({
+      users,
+      totalPages,
+    });
   } catch (error) {
-    // Log do erro no console
     console.error(error);
 
-    // Retornar erro 500 (erro do servidor)
     res.status(500).json({
       message: 'Erro ao buscar usuários',
     });
@@ -38,42 +47,34 @@ export async function getUsers(req, res) {
  */
 export async function createUser(req, res) {
   try {
-    // Extrair dados do body da requisição
-    const { name, email } = req.body;
+    const { name, email, role = 'customer', status = 'active' } = req.body;
 
-    // Validar se os campos obrigatórios foram preenchidos
     if (!name || !email) {
       return res.status(400).json({
         message: 'Todos os campos são obrigatórios',
       });
     }
 
-    // Inserir novo usuário no banco
     const [result] = await db.query(
       `INSERT INTO users
-
-      (
-        name,
-        email,
-        password
-      )
-
-      VALUES (?, ?, ?)`,
-
-      [name, email, '123456']
+        (
+          name,
+          email,
+          password,
+          role,
+          status
+        )
+        VALUES (?, ?, ?, ?, ?)`,
+      [name, email, '123456', role, status]
     );
 
-    // Retornar sucesso 201 (criado) com ID do novo usuário
     res.status(201).json({
       message: 'Usuário criado com sucesso',
-
       id: result.insertId,
     });
   } catch (error) {
-    // Log do erro
     console.error(error);
 
-    // Retornar erro 500
     res.status(500).json({
       message: 'Erro ao criar usuário',
     });
@@ -87,42 +88,38 @@ export async function createUser(req, res) {
  */
 export async function updateUser(req, res) {
   try {
-    // Extrair ID da URL
     const { id } = req.params;
+    const { name, email, status, role = 'customer' } = req.body;
 
-    // Extrair dados de atualização do body
-    const { name, email, status } = req.body;
+    if (!name || !email) {
+      return res.status(400).json({
+        message: 'Nome e e-mail são obrigatórios',
+      });
+    }
 
-    // Atualizar usuário no banco
     const [result] = await db.query(
       `UPDATE users
-
-      SET
-
-      name = ?,
-
-      email = ?,
-
-      status = ?
-
-      WHERE id = ?`,
-
-      [name, email, status, id]
+        SET
+          name = ?,
+          email = ?,
+          status = ?,
+          role = ?
+        WHERE id = ?`,
+      [name, email, status, role, id]
     );
 
-    // Verificar se alguma linha foi afetada (usuário existe)
     if (result.affectedRows === 0) {
       return res.status(404).json({
         message: 'Usuário não encontrado',
       });
     }
 
-    // Retornar sucesso
     res.json({
       message: 'Usuário atualizado',
     });
   } catch (error) {
-    // Retornar erro 500
+    console.error(error);
+
     res.status(500).json({
       message: 'Erro ao atualizar usuário',
     });

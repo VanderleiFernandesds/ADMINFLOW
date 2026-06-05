@@ -35,8 +35,10 @@ app.get('/status', async (req, res) => {
   }
 });
 
+const PORT = process.env.PORT || 3000;
+
 app.use('/users', userRoutes);
 
-app.listen(process.env.PORT, () => {
-  console.log(`Servidor rodando na porta ${process.env.PORT}`);
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
 });

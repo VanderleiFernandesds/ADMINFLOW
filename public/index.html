@@ -31,12 +31,8 @@
 
           <button id="openModalBtn">Novo Usuário</button>
           <div class="table-actions">
-  <input
-    type="text"
-    id="searchInput"
-    placeholder="Buscar por nome ou email..."
-  >
-</div>
+            <input type="text" id="searchInput" placeholder="Buscar por nome ou email..." />
+          </div>
         </header>
         <div id="loading" class="loading">Carregando usuários...</div>
         <section class="table-container">
@@ -53,6 +49,27 @@
 
             <tbody id="userTableBody"></tbody>
           </table>
+          <div class="pagination">
+
+  <button id="prevPageBtn">
+
+    Anterior
+
+  </button>
+
+  <span id="pageInfo">
+
+    Página 1
+
+  </span>
+
+  <button id="nextPageBtn">
+
+    Próxima
+
+  </button>
+
+</div>
         </section>
       </main>
     </div>

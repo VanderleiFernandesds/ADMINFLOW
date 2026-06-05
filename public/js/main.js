@@ -1,13 +1,17 @@
 const API_URL = 'http://localhost:3000/users';
 
+let currentPage = 1;
+let totalPages = 1;
 let editingUserId = null;
 let userToDelete = null;
 let usersData = [];
 
 const searchInput = document.getElementById('searchInput');
 const userTableBody = document.getElementById('userTableBody');
+
 const userModal = document.getElementById('userModal');
 const deleteModal = document.getElementById('deleteModal');
+
 const userForm = document.getElementById('userForm');
 
 const nameInput = document.getElementById('name');
@@ -15,6 +19,7 @@ const emailInput = document.getElementById('email');
 const roleIdInput = document.getElementById('roleId');
 
 const openModalBtn = document.getElementById('openModalBtn');
+const closeModalBtn = document.getElementById('closeModalBtn');
 const saveButton = userForm.querySelector('button[type="submit"]');
 
 const deleteMessage = document.getElementById('deleteMessage');
@@ -24,24 +29,29 @@ const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
 const toast = document.getElementById('toast');
 const loading = document.getElementById('loading');
 
-async function loadUsers() {
+const prevPageBtn = document.getElementById('prevPageBtn');
+const nextPageBtn = document.getElementById('nextPageBtn');
+const pageInfo = document.getElementById('pageInfo');
 
+async function loadUsers() {
   try {
     loading.style.display = 'block';
 
-    const response = await fetch(API_URL);
+    const response = await fetch(`${API_URL}?page=${currentPage}`);
 
     if (!response.ok) {
       throw new Error('Erro ao carregar usuários');
     }
 
-     const users = await response.json();
+    const data = await response.json();
+    const responseUsers = Array.isArray(data) ? data : data.users;
 
-     usersData = users;
+    usersData = responseUsers || [];
+    totalPages = data.totalPages || 1;
 
-     renderUsers(usersData);
+    pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
 
-    renderUsers(users);
+    renderUsers(usersData);
   } catch (error) {
     showToast(error.message);
   } finally {
@@ -86,7 +96,7 @@ function renderUsers(users) {
 }
 
 function openUserModal() {
-  userModal.style.display = 'block';
+  userModal.style.display = 'flex';
 }
 
 function closeUserModal() {
@@ -105,7 +115,7 @@ function openDeleteModal(user) {
 
   deleteMessage.textContent = `Deseja realmente excluir ${user.name}?`;
 
-  deleteModal.style.display = 'block';
+  deleteModal.style.display = 'flex';
 }
 
 function closeDeleteModal() {
@@ -119,20 +129,23 @@ openModalBtn.addEventListener('click', () => {
   openUserModal();
 });
 
+closeModalBtn.addEventListener('click', () => {
+  closeUserModal();
+});
+
 userForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
   const name = nameInput.value.trim();
   const email = emailInput.value.trim();
-  const roleId = roleIdInput.value.trim();
+  const role = roleIdInput.value.trim();
 
-  if (!name || !email || !roleId) {
-    showToast('Preencha todos os campos');
+  if (!name || !email) {
+    showToast('Preencha nome e email');
     return;
   }
 
   const method = editingUserId ? 'PUT' : 'POST';
-
   const url = editingUserId ? `${API_URL}/${editingUserId}` : API_URL;
 
   try {
@@ -147,7 +160,7 @@ userForm.addEventListener('submit', async (event) => {
       body: JSON.stringify({
         name,
         email,
-        role_id: roleId,
+        role: role || 'customer',
         status: 'active',
       }),
     });
@@ -169,54 +182,30 @@ userForm.addEventListener('submit', async (event) => {
   }
 });
 
-document.addEventListener('click', async (event) => {
+document.addEventListener('click', (event) => {
   const button = event.target;
   const id = button.dataset.id;
 
   if (button.classList.contains('edit-btn')) {
-    try {
-      const response = await fetch(API_URL);
+    const user = usersData.find((user) => user.id == id);
 
-      if (!response.ok) {
-        throw new Error('Erro ao carregar usuário');
-      }
+    if (!user) return;
 
-      const users = await response.json();
+    editingUserId = id;
 
-      const user = users.find((user) => user.id == id);
+    nameInput.value = user.name;
+    emailInput.value = user.email;
+    roleIdInput.value = user.role || '';
 
-      if (!user) return;
-
-      editingUserId = id;
-
-      nameInput.value = user.name;
-      emailInput.value = user.email;
-      roleIdInput.value = user.role_id;
-
-      openUserModal();
-    } catch (error) {
-      showToast(error.message);
-    }
+    openUserModal();
   }
 
   if (button.classList.contains('delete-btn')) {
-    try {
-      const response = await fetch(API_URL);
+    const user = usersData.find((user) => user.id == id);
 
-      if (!response.ok) {
-        throw new Error('Erro ao carregar usuário');
-      }
+    if (!user) return;
 
-      const users = await response.json();
-
-      const user = users.find((user) => user.id == id);
-
-      if (!user) return;
-
-      openDeleteModal(user);
-    } catch (error) {
-      showToast(error.message);
-    }
+    openDeleteModal(user);
   }
 });
 
@@ -246,25 +235,6 @@ cancelDeleteBtn.addEventListener('click', () => {
   closeDeleteModal();
 });
 
-function showToast(message) {
-  toast.textContent = message;
-
-  toast.classList.add('show');
-
-  setTimeout(() => {
-    toast.classList.remove('show');
-  }, 3000);
-}
-
-loadUsers();
-
-const closeModalBtn = document.getElementById('closeModalBtn');
-
-closeModalBtn.addEventListener('click', () => {
-  closeUserModal();
-});
-
-
 searchInput.addEventListener('input', () => {
   const searchValue = searchInput.value.toLowerCase();
 
@@ -277,3 +247,29 @@ searchInput.addEventListener('input', () => {
 
   renderUsers(filteredUsers);
 });
+
+prevPageBtn.addEventListener('click', () => {
+  if (currentPage > 1) {
+    currentPage--;
+    loadUsers();
+  }
+});
+
+nextPageBtn.addEventListener('click', () => {
+  if (currentPage < totalPages) {
+    currentPage++;
+    loadUsers();
+  }
+});
+
+function showToast(message) {
+  toast.textContent = message;
+
+  toast.classList.add('show');
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+loadUsers();
