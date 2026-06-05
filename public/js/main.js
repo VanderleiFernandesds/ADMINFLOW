@@ -1,4 +1,13 @@
-const API_URL = 'http://localhost:3000/users';
+import {
+  createUser,
+  deleteUser,
+  fetchUsers,
+  updateUser,
+} from './api/usersApi.js';
+import { closeModal, openModal } from './ui/modal.js';
+import { renderPagination } from './ui/pagination.js';
+import { renderUsersTable } from './ui/table.js';
+import { showToast } from './ui/toast.js';
 
 let currentPage = 1;
 let totalPages = 1;
@@ -8,27 +17,20 @@ let usersData = [];
 
 const searchInput = document.getElementById('searchInput');
 const userTableBody = document.getElementById('userTableBody');
-
 const userModal = document.getElementById('userModal');
 const deleteModal = document.getElementById('deleteModal');
-
 const userForm = document.getElementById('userForm');
-
 const nameInput = document.getElementById('name');
 const emailInput = document.getElementById('email');
 const roleIdInput = document.getElementById('roleId');
-
 const openModalBtn = document.getElementById('openModalBtn');
 const closeModalBtn = document.getElementById('closeModalBtn');
 const saveButton = userForm.querySelector('button[type="submit"]');
-
 const deleteMessage = document.getElementById('deleteMessage');
 const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-
 const toast = document.getElementById('toast');
 const loading = document.getElementById('loading');
-
 const prevPageBtn = document.getElementById('prevPageBtn');
 const nextPageBtn = document.getElementById('nextPageBtn');
 const pageInfo = document.getElementById('pageInfo');
@@ -37,145 +39,89 @@ async function loadUsers() {
   try {
     loading.style.display = 'block';
 
-    const response = await fetch(`${API_URL}?page=${currentPage}`);
+    const data = await fetchUsers(currentPage);
 
-    if (!response.ok) {
-      throw new Error('Erro ao carregar usuários');
-    }
-
-    const data = await response.json();
-    const responseUsers = Array.isArray(data) ? data : data.users;
-
-    usersData = responseUsers || [];
+    usersData = data.users || [];
     totalPages = data.totalPages || 1;
+    currentPage = data.page || currentPage;
 
-    pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
-
-    renderUsers(usersData);
+    renderUsersTable(userTableBody, usersData);
+    renderPagination({ currentPage, totalPages, pageInfo, prevPageBtn, nextPageBtn });
   } catch (error) {
-    showToast(error.message);
+    showToast(toast, error.message);
   } finally {
     loading.style.display = 'none';
   }
 }
 
-function renderUsers(users) {
-  userTableBody.innerHTML = '';
-
-  if (users.length === 0) {
-    userTableBody.innerHTML = `
-      <tr>
-        <td colspan="5">
-          Nenhum usuário encontrado
-        </td>
-      </tr>
-    `;
-
-    return;
-  }
-
-  users.forEach((user) => {
-    userTableBody.innerHTML += `
-      <tr>
-        <td>${user.id}</td>
-        <td>${user.name}</td>
-        <td>${user.email}</td>
-        <td>${user.status}</td>
-        <td>
-          <button class="edit-btn" data-id="${user.id}">
-            Editar
-          </button>
-
-          <button class="delete-btn" data-id="${user.id}">
-            Excluir
-          </button>
-        </td>
-      </tr>
-    `;
-  });
-}
-
-function openUserModal() {
-  userModal.style.display = 'flex';
-}
-
-function closeUserModal() {
-  userModal.style.display = 'none';
-
+function resetUserForm() {
   editingUserId = null;
-
   userForm.reset();
-
   saveButton.disabled = false;
   saveButton.textContent = 'Salvar';
 }
 
+function closeUserModal() {
+  closeModal(userModal);
+  resetUserForm();
+}
+
 function openDeleteModal(user) {
   userToDelete = user.id;
-
   deleteMessage.textContent = `Deseja realmente excluir ${user.name}?`;
-
-  deleteModal.style.display = 'flex';
+  openModal(deleteModal);
 }
 
 function closeDeleteModal() {
-  deleteModal.style.display = 'none';
-
   userToDelete = null;
+  closeModal(deleteModal);
 }
 
 openModalBtn.addEventListener('click', () => {
-  closeUserModal();
-  openUserModal();
+  resetUserForm();
+  openModal(userModal);
 });
 
-closeModalBtn.addEventListener('click', () => {
-  closeUserModal();
-});
+closeModalBtn.addEventListener('click', closeUserModal);
 
 userForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
   const name = nameInput.value.trim();
   const email = emailInput.value.trim();
-  const role = roleIdInput.value.trim();
+  const role = roleIdInput.value.trim() || 'customer';
 
   if (!name || !email) {
-    showToast('Preencha nome e email');
+    showToast(toast, 'Preencha nome e email');
     return;
   }
-
-  const method = editingUserId ? 'PUT' : 'POST';
-  const url = editingUserId ? `${API_URL}/${editingUserId}` : API_URL;
 
   try {
     saveButton.disabled = true;
     saveButton.textContent = 'Salvando...';
 
-    const response = await fetch(url, {
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        role: role || 'customer',
-        status: 'active',
-      }),
-    });
+    const payload = {
+      name,
+      email,
+      role,
+      status: 'active',
+    };
 
-    if (!response.ok) {
-      throw new Error('Erro ao salvar usuário');
+    if (editingUserId) {
+      await updateUser(editingUserId, payload);
+    } else {
+      await createUser(payload);
     }
 
-    showToast(editingUserId ? 'Usuário atualizado com sucesso' : 'Usuário criado com sucesso');
+    showToast(
+      toast,
+      editingUserId ? 'Usuario atualizado com sucesso' : 'Usuario criado com sucesso'
+    );
 
     closeUserModal();
-
     loadUsers();
   } catch (error) {
-    showToast(error.message);
+    showToast(toast, error.message);
   } finally {
     saveButton.disabled = false;
     saveButton.textContent = 'Salvar';
@@ -187,25 +133,24 @@ document.addEventListener('click', (event) => {
   const id = button.dataset.id;
 
   if (button.classList.contains('edit-btn')) {
-    const user = usersData.find((user) => user.id == id);
+    const user = usersData.find((item) => item.id == id);
 
     if (!user) return;
 
     editingUserId = id;
-
     nameInput.value = user.name;
     emailInput.value = user.email;
     roleIdInput.value = user.role || '';
 
-    openUserModal();
+    openModal(userModal);
   }
 
   if (button.classList.contains('delete-btn')) {
-    const user = usersData.find((user) => user.id == id);
+    const user = usersData.find((item) => item.id == id);
 
-    if (!user) return;
-
-    openDeleteModal(user);
+    if (user) {
+      openDeleteModal(user);
+    }
   }
 });
 
@@ -213,27 +158,17 @@ confirmDeleteBtn.addEventListener('click', async () => {
   if (!userToDelete) return;
 
   try {
-    const response = await fetch(`${API_URL}/${userToDelete}`, {
-      method: 'DELETE',
-    });
+    await deleteUser(userToDelete);
 
-    if (!response.ok) {
-      throw new Error('Erro ao excluir usuário');
-    }
-
-    showToast('Usuário desativado com sucesso');
-
+    showToast(toast, 'Usuario desativado com sucesso');
     closeDeleteModal();
-
     loadUsers();
   } catch (error) {
-    showToast(error.message);
+    showToast(toast, error.message);
   }
 });
 
-cancelDeleteBtn.addEventListener('click', () => {
-  closeDeleteModal();
-});
+cancelDeleteBtn.addEventListener('click', closeDeleteModal);
 
 searchInput.addEventListener('input', () => {
   const searchValue = searchInput.value.toLowerCase();
@@ -245,7 +180,7 @@ searchInput.addEventListener('input', () => {
     );
   });
 
-  renderUsers(filteredUsers);
+  renderUsersTable(userTableBody, filteredUsers);
 });
 
 prevPageBtn.addEventListener('click', () => {
@@ -261,15 +196,5 @@ nextPageBtn.addEventListener('click', () => {
     loadUsers();
   }
 });
-
-function showToast(message) {
-  toast.textContent = message;
-
-  toast.classList.add('show');
-
-  setTimeout(() => {
-    toast.classList.remove('show');
-  }, 3000);
-}
 
 loadUsers();
