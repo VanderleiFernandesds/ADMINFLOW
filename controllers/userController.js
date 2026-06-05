@@ -23,6 +23,7 @@ export async function getUsers(req, res) {
           role,
           created_at
         FROM users
+         WHERE status = 'active'
         LIMIT ? OFFSET ?`,
       [limit, offset]
     );
@@ -133,27 +134,27 @@ export async function updateUser(req, res) {
  */
 export async function deleteUser(req, res) {
   try {
-    // Extrair ID da URL
     const { id } = req.params;
 
-    // Deletar usuário do banco
-    const [result] = await db.query('DELETE FROM users WHERE id = ?', [id]);
+    const [result] = await db.query(
+      `UPDATE users
+       SET status = 'inactive'
+       WHERE id = ?`,
+      [id]
+    );
 
-    // Verificar se alguma linha foi afetada (usuário existe)
     if (result.affectedRows === 0) {
       return res.status(404).json({
         message: 'Usuário não encontrado',
       });
     }
 
-    // Retornar sucesso
     res.json({
-      message: 'Usuário removido',
+      message: 'Usuário desativado com sucesso',
     });
   } catch {
-    // Retornar erro 500
     res.status(500).json({
-      message: 'Erro ao remover usuário',
+      message: 'Erro ao desativar usuário',
     });
   }
 }

@@ -221,7 +221,7 @@ confirmDeleteBtn.addEventListener('click', async () => {
       throw new Error('Erro ao excluir usuário');
     }
 
-    showToast('Usuário excluído com sucesso');
+    showToast('Usuário desativado com sucesso');
 
     closeDeleteModal();
 
