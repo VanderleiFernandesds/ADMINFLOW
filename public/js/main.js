@@ -1,13 +1,17 @@
-import {
-  createUser,
-  deleteUser,
-  fetchUsers,
-  updateUser,
-} from './api/usersApi.js';
+import { createUser, deleteUser, fetchUsers, updateUser } from './api/usersApi.js';
 import { closeModal, openModal } from './ui/modal.js';
 import { renderPagination } from './ui/pagination.js';
 import { renderUsersTable } from './ui/table.js';
 import { showToast } from './ui/toast.js';
+
+const DASHBOARD_URL =
+  window.location.protocol === 'file:'
+    ? 'http://localhost:3000/dashboard/stats'
+    : '/dashboard/stats';
+
+const totalUsersCard = document.getElementById('totalUsers');
+const activeUsersCard = document.getElementById('activeUsers');
+const inactiveUsersCard = document.getElementById('inactiveUsers');
 
 let currentPage = 1;
 let totalPages = 1;
@@ -51,6 +55,24 @@ async function loadUsers() {
     showToast(toast, error.message);
   } finally {
     loading.style.display = 'none';
+  }
+}
+
+async function loadDashboardStats() {
+  try {
+    const response = await fetch(DASHBOARD_URL);
+
+    if (!response.ok) {
+      throw new Error('Erro ao carregar métricas');
+    }
+
+    const stats = await response.json();
+
+    totalUsersCard.textContent = stats.totalUsers;
+    activeUsersCard.textContent = stats.activeUsers;
+    inactiveUsersCard.textContent = stats.inactiveUsers;
+  } catch (error) {
+    showToast(toast, error.message);
   }
 }
 
@@ -115,7 +137,7 @@ userForm.addEventListener('submit', async (event) => {
 
     showToast(
       toast,
-      editingUserId ? 'Usuario atualizado com sucesso' : 'Usuario criado com sucesso'
+      editingUserId ? 'Usuário atualizado com sucesso' : 'Usuário criado com sucesso'
     );
 
     closeUserModal();
@@ -160,7 +182,7 @@ confirmDeleteBtn.addEventListener('click', async () => {
   try {
     await deleteUser(userToDelete);
 
-    showToast(toast, 'Usuario desativado com sucesso');
+    showToast(toast, 'Usuário desativado com sucesso');
     closeDeleteModal();
     loadUsers();
   } catch (error) {
@@ -198,3 +220,4 @@ nextPageBtn.addEventListener('click', () => {
 });
 
 loadUsers();
+loadDashboardStats();

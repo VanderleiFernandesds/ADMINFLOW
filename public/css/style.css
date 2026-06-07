@@ -80,13 +80,10 @@ td {
   border-top: 1px solid #e2e8f0;
 }
 
-button{
-
+button {
   margin-bottom: 20px;
-
 }
 button {
-
   border: none;
 
   background: #2563eb;
@@ -98,9 +95,7 @@ button {
   border-radius: 8px;
 
   cursor: pointer;
-
 }
-
 
 .modal {
   display: none;
@@ -165,13 +160,11 @@ button {
 }
 
 .modal-content button[type='submit'] {
-
   width: 100%;
   margin-top: 8px;
 }
 
 .edit-btn {
-
   background: #2563eb;
 
   color: white;
@@ -185,11 +178,9 @@ button {
   cursor: pointer;
 
   margin-right: 8px;
-
 }
 
 .delete-btn {
-
   background: #dc2626;
 
   color: white;
@@ -201,28 +192,21 @@ button {
   border-radius: 8px;
 
   cursor: pointer;
-
 }
 
-
 .delete-modal {
-
   max-width: 420px;
 
   text-align: center;
-
 }
 
 .delete-icon {
-
   font-size: 60px;
 
   margin-bottom: 20px;
-
 }
 
 .modal-actions {
-
   display: flex;
 
   gap: 12px;
@@ -230,11 +214,9 @@ button {
   justify-content: center;
 
   margin-top: 24px;
-
 }
 
 .secondary-btn {
-
   background: #e2e8f0;
 
   border: none;
@@ -244,11 +226,9 @@ button {
   border-radius: 10px;
 
   cursor: pointer;
-
 }
 
 .danger-btn {
-
   background: #dc2626;
 
   color: white;
@@ -260,9 +240,7 @@ button {
   border-radius: 10px;
 
   cursor: pointer;
-
 }
-
 
 .toast {
   position: fixed;
@@ -283,14 +261,12 @@ button {
   transform: translateY(0);
 }
 
-
 .loading {
   display: none;
   margin-bottom: 16px;
   color: #64748b;
   font-weight: 700;
 }
-
 
 .table-actions {
   margin-bottom: 20px;
@@ -303,4 +279,30 @@ button {
   border: 1px solid #cbd5e1;
   border-radius: 10px;
   font-size: 15px;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.analytics-card {
+  background: white;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+.analytics-card span {
+  display: block;
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.analytics-card strong {
+  font-size: 32px;
+  color: #0f172a;
 }

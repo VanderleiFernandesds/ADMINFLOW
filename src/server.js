@@ -5,6 +5,7 @@ import express from 'express';
 import db from './config/db.js';
 import errorMiddleware from './middlewares/error.middleware.js';
 import userRoutes from './modules/users/user.routes.js';
+import dashboardRoutes from './modules/dashboard/dashboard.routes.js';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.get('/status', async (req, res, next) => {
 });
 
 app.use('/users', userRoutes);
+app.use('/dashboard', dashboardRoutes);
 app.use(errorMiddleware);
 
 const server = app.listen(PORT, () => {
@@ -37,7 +39,9 @@ const server = app.listen(PORT, () => {
 
 server.on('error', (error) => {
   if (error.code === 'EADDRINUSE') {
-    console.error(`A porta ${PORT} ja esta em uso. Feche o servidor antigo ou altere PORT no .env.`);
+    console.error(
+      `A porta ${PORT} ja esta em uso. Feche o servidor antigo ou altere PORT no .env.`
+    );
     process.exit(1);
   }
 

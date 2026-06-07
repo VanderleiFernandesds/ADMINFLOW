@@ -1,12 +1,7 @@
 import express from 'express';
 
 import asyncHandler from '../../utils/asyncHandler.js';
-import {
-  createUser,
-  deleteUser,
-  getUsers,
-  updateUser,
-} from './user.controller.js';
+import { createUser, deleteUser, getUsers, updateUser } from './user.controller.js';
 import { validateCreateUser, validateUpdateUser } from './user.validation.js';
 
 const router = express.Router();

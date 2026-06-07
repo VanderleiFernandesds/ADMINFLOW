@@ -2,11 +2,8 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>AdminFlow</title>
-
     <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
@@ -30,11 +27,31 @@
           </div>
 
           <button id="openModalBtn">Novo Usuário</button>
+
           <div class="table-actions">
             <input type="text" id="searchInput" placeholder="Buscar por nome ou email..." />
           </div>
         </header>
+
+        <section class="analytics-grid">
+          <div class="analytics-card">
+            <span>Total</span>
+            <strong id="totalUsers">0</strong>
+          </div>
+
+          <div class="analytics-card">
+            <span>Ativos</span>
+            <strong id="activeUsers">0</strong>
+          </div>
+
+          <div class="analytics-card">
+            <span>Inativos</span>
+            <strong id="inactiveUsers">0</strong>
+          </div>
+        </section>
+
         <div id="loading" class="loading">Carregando usuários...</div>
+
         <section class="table-container">
           <table>
             <thead>
@@ -49,27 +66,12 @@
 
             <tbody id="userTableBody"></tbody>
           </table>
+
           <div class="pagination">
-
-  <button id="prevPageBtn">
-
-    Anterior
-
-  </button>
-
-  <span id="pageInfo">
-
-    Página 1
-
-  </span>
-
-  <button id="nextPageBtn">
-
-    Próxima
-
-  </button>
-
-</div>
+            <button id="prevPageBtn">Anterior</button>
+            <span id="pageInfo">Página 1</span>
+            <button id="nextPageBtn">Próxima</button>
+          </div>
         </section>
       </main>
     </div>
@@ -78,7 +80,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h2 id="modalTitle">Novo Usuário</h2>
-          <button type="button" class="close-btn" id="closeModalBtn">×</button>
+          <button type="button" class="close-btn" id="closeModalBtn">&times;</button>
         </div>
 
         <form id="userForm">
@@ -104,7 +106,7 @@
 
     <div id="deleteModal" class="modal">
       <div class="modal-content delete-modal">
-        <div class="delete-icon">⚠️</div>
+        <div class="delete-icon">!</div>
 
         <h2>Confirmar Exclusão</h2>
 
@@ -112,7 +114,6 @@
 
         <div class="modal-actions">
           <button id="cancelDeleteBtn" class="secondary-btn">Cancelar</button>
-
           <button id="confirmDeleteBtn" class="danger-btn">Excluir</button>
         </div>
       </div>
