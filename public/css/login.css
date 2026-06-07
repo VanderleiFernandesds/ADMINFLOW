@@ -1,0 +1,140 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f8fafc;
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+}
+
+.auth-wallpaper {
+  background:
+    linear-gradient(rgba(15, 23, 42, .75), rgba(15, 23, 42, .9)),
+    url('../assets/company-wallpaper.jpg');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 80px;
+  display: flex;
+  align-items: center;
+}
+
+.auth-wallpaper h1 {
+  font-size: 42px;
+  margin-bottom: 32px;
+}
+
+.auth-wallpaper h2 {
+  font-size: 34px;
+  margin-bottom: 16px;
+}
+
+.auth-wallpaper p {
+  max-width: 420px;
+  line-height: 1.7;
+  color: #cbd5e1;
+}
+
+.auth-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+}
+
+.auth-form {
+  display: none;
+}
+
+.auth-form.active {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-form h2 {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.auth-form p {
+  color: #64748b;
+  margin-bottom: 28px;
+}
+
+.auth-form input {
+  height: 54px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 0 16px;
+  margin-bottom: 16px;
+  font-size: 15px;
+}
+
+.auth-form button {
+  height: 54px;
+  border: none;
+  border-radius: 12px;
+  background: #4f46e5;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 14px;
+}
+
+.google-btn {
+  background: white !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+.auth-form span {
+  color: #64748b;
+  text-align: center;
+}
+
+.auth-form span button {
+  height: auto;
+  background: transparent;
+  color: #4f46e5;
+  margin: 0;
+  font-weight: 700;
+}
+
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  background: #0f172a;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 10px;
+  opacity: 0;
+  transition: .3s;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+@media (max-width: 900px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-wallpaper {
+    display: none;
+  }
+}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AdminFlow — Login</title>
+
+  <link rel="stylesheet" href="./css/login.css">
+</head>
+<body>
+
+  <main class="auth-page">
+
+    <section class="auth-wallpaper">
+      <div>
+        <h1>AdminFlow</h1>
+        <h2>Gerencie sua operação com clareza.</h2>
+        <p>
+          Um painel administrativo moderno para controlar usuários,
+          permissões e indicadores do seu sistema.
+        </p>
+      </div>
+    </section>
+
+    <section class="auth-area">
+
+      <div class="auth-card">
+
+        <form id="loginForm" class="auth-form active">
+          <h2>Entrar</h2>
+          <p>Acesse sua conta para continuar</p>
+
+          <input type="email" id="loginEmail" placeholder="Email">
+          <input type="password" id="loginPassword" placeholder="Senha">
+
+          <button type="submit">Entrar</button>
+
+          <button type="button" class="google-btn">
+            Entrar com Google
+          </button>
+
+          <span>
+            Não tem conta?
+            <button type="button" id="showRegisterBtn">
+              Cadastrar
+            </button>
+          </span>
+        </form>
+
+        <form id="registerForm" class="auth-form">
+          <h2>Criar conta</h2>
+          <p>Cadastre-se para acessar o painel</p>
+
+          <input type="text" id="registerName" placeholder="Nome completo">
+          <input type="email" id="registerEmail" placeholder="Email">
+          <input type="password" id="registerPassword" placeholder="Senha">
+
+          <button type="submit">Cadastrar</button>
+
+          <span>
+            Já tem conta?
+            <button type="button" id="showLoginBtn">
+              Fazer login
+            </button>
+          </span>
+        </form>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="./js/login.js"></script>
+</body>
+</html>

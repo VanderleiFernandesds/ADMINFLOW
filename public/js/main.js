@@ -1,3 +1,9 @@
+const token = localStorage.getItem('token');
+
+if (!token) {
+  window.location.href = 'login.html';
+}
+
 import { createUser, deleteUser, fetchUsers, updateUser } from './api/usersApi.js';
 import { closeModal, openModal } from './ui/modal.js';
 import { renderPagination } from './ui/pagination.js';
@@ -217,6 +223,15 @@ nextPageBtn.addEventListener('click', () => {
     currentPage++;
     loadUsers();
   }
+});
+
+const logoutBtn = document.getElementById('logoutBtn');
+
+logoutBtn.addEventListener('click', () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+
+  window.location.href = 'login.html';
 });
 
 loadUsers();

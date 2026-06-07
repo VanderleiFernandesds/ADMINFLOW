@@ -6,6 +6,7 @@ import db from './config/db.js';
 import errorMiddleware from './middlewares/error.middleware.js';
 import userRoutes from './modules/users/user.routes.js';
 import dashboardRoutes from './modules/dashboard/dashboard.routes.js';
+import authRoutes from './modules/auth/auth.routes.js';
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.get('/status', async (req, res, next) => {
 app.use('/users', userRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use(errorMiddleware);
+app.use('/auth', authRoutes);
 
 const server = app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
