@@ -1,4 +1,4 @@
-export function renderUsersTable(tableBody, users) {
+export function renderUsersTable(tableBody, users, currentUser) {
   tableBody.innerHTML = '';
 
   if (users.length === 0) {
@@ -20,7 +20,11 @@ export function renderUsersTable(tableBody, users) {
         <td>${user.status}</td>
         <td>
           <button class="edit-btn" data-id="${user.id}">Editar</button>
-          <button class="delete-btn" data-id="${user.id}">Excluir</button>
+          ${
+            currentUser?.role === 1
+              ? `<button class="delete-btn" data-id="${user.id}">Excluir</button>`
+              : ''
+          }
         </td>
       </tr>
     `;

@@ -10,6 +10,17 @@ import { renderPagination } from './ui/pagination.js';
 import { renderUsersTable } from './ui/table.js';
 import { showToast } from './ui/toast.js';
 import { authFetch } from './utils/auth.js';
+import { getCurrentUser } from './utils/user.js';
+
+const currentUser = getCurrentUser();
+
+if (!currentUser || currentUser.role!== 1) {
+  const adminMenu = document.getElementById('adminMenu');
+
+  if (adminMenu) {
+    adminMenu.remove();
+  }
+}
 
 const DASHBOARD_URL =
   window.location.protocol === 'file:'
@@ -56,7 +67,7 @@ async function loadUsers() {
     totalPages = data.totalPages || 1;
     currentPage = data.page || currentPage;
 
-    renderUsersTable(userTableBody, usersData);
+    renderUsersTable(userTableBody, usersData, currentUser);
     renderPagination({ currentPage, totalPages, pageInfo, prevPageBtn, nextPageBtn });
   } catch (error) {
     showToast(toast, error.message);
@@ -209,7 +220,7 @@ searchInput.addEventListener('input', () => {
     );
   });
 
-  renderUsersTable(userTableBody, filteredUsers);
+  renderUsersTable(userTableBody, filteredUsers, currentUser);
 });
 
 prevPageBtn.addEventListener('click', () => {
