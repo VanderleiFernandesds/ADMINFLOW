@@ -9,6 +9,7 @@ import { closeModal, openModal } from './ui/modal.js';
 import { renderPagination } from './ui/pagination.js';
 import { renderUsersTable } from './ui/table.js';
 import { showToast } from './ui/toast.js';
+import { authFetch } from './utils/auth.js';
 
 const DASHBOARD_URL =
   window.location.protocol === 'file:'
@@ -66,7 +67,7 @@ async function loadUsers() {
 
 async function loadDashboardStats() {
   try {
-    const response = await fetch(DASHBOARD_URL);
+    const response = await authFetch(DASHBOARD_URL);
 
     if (!response.ok) {
       throw new Error('Erro ao carregar métricas');

@@ -32,8 +32,9 @@ app.get('/status', async (req, res, next) => {
 
 app.use('/users', userRoutes);
 app.use('/dashboard', dashboardRoutes);
-app.use(errorMiddleware);
 app.use('/auth', authRoutes);
+
+app.use(errorMiddleware);
 
 const server = app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
