@@ -1,9 +1,3 @@
-const token = localStorage.getItem('token');
-
-if (!token) {
-  window.location.href = 'login.html';
-}
-
 import { createUser, deleteUser, fetchUsers, updateUser } from './api/usersApi.js';
 import { closeModal, openModal } from './ui/modal.js';
 import { renderPagination } from './ui/pagination.js';
@@ -12,9 +6,17 @@ import { showToast } from './ui/toast.js';
 import { authFetch } from './utils/auth.js';
 import { getCurrentUser } from './utils/user.js';
 
+const token = localStorage.getItem('token');
+
+if (!token) {
+  window.location.href = 'login.html';
+}
+
 const currentUser = getCurrentUser();
 
-if (!currentUser || currentUser.role!== 1) {
+const API_BASE_URL = window.location.protocol === 'file:' ? 'http://localhost:3000' : '';
+
+if (!currentUser || currentUser.role !== 1) {
   const adminMenu = document.getElementById('adminMenu');
 
   if (adminMenu) {
@@ -56,7 +58,6 @@ const loading = document.getElementById('loading');
 const prevPageBtn = document.getElementById('prevPageBtn');
 const nextPageBtn = document.getElementById('nextPageBtn');
 const pageInfo = document.getElementById('pageInfo');
-
 async function loadUsers() {
   try {
     loading.style.display = 'block';

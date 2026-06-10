@@ -48,3 +48,4 @@ export async function deleteUserService(id) {
     throw createNotFoundError('Usuario nao encontrado');
   }
 }
+
